@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content%}
+<h2>Foydalanuvchini izlash</h2>
+<form method=POST>
+    {% csrf_token %}
+    <input type="input" class="form-control" placeholder="Izlagan imkon topar..." name="search">
+    <br>               
+<button type="submit" class="btn btn-secondary">Izlash</button>
+</form>
+<br>
+<hr>
+{% if search %}
+<h3>Natijalar: {{search}}</h3><br/>
+{%endif%}
+{% if searched %}
+{% for result in searched %}
+
+<div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+    <div class="col-md-4">
+        {% if result.profile.profile_image %}
+        <img src={{result.profile.profile_image.url}} style="border-radius: 100%; padding: 10px; vertical-align: middle" width="140" height="140" class="rounded-circe" alt={{profile.user.username}}>
+        {% else %}
+        <img src="{% static 'images/tweeter.png' %}" width="140" style="padding: 10px" class="img-fluid" alt="Serverda yoki sizning tarmoqda muammo bor">
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <div class="card-body">
+        <h5 class="card-title">{{ result.profile.user.username }}</h5>
+        <p class="card-text" style="color: blue"><a href="{% url 'profile' result.profile.user.id %}" style="text-decoration: none; color: orange">@{{ result.profile.user.username|lower }}</a></p>
+        <p class="card-text"><small class="text-body-secondary">O'zgarish: {{ result.profile.date_modified }}</small></p>
+        </div>
+    </div>
+    </div>
+</div>
+<br/>
+
+{% endfor %}
+{%else%}
+{% if searched == None %}
+{%else%}
+Uzr, {{search}} nomli foydalanuvchi mavjud emas...
+{% endif %}
+{% endif %}
+{% endblock %}

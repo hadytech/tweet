@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content%}
+{% if profile %}
+<div class="container text-center">
+    <div class="row">
+        <div class="col-8">
+            <h2>{{ profile.user.username }}</h2>
+        </div>
+        <hr>
+        <div class="col-8">
+        {% if twits %}
+            {% for twit in twits %}
+            <div class="alert" role="alert">
+                <div class="container">
+                    <div class="atwit">
+                        <div class="col-2 chapakay">
+                            <div class="propho">
+                            {% if profile.profile_image %}
+                            <img src={{ profile.profile_image.url }} alt={{ profile.user.username }} width=50 height=50 class="rounded-circle" />
+                            {% else %}
+                            <img src={% static 'images/tweeter.png'%} alt={{profile.user.username}} width=50 height=50 class="image-fluid" />
+                            {% endif%}
+                            </div>
+                            <small class="datum">
+                                <a href="{% url 'profile' twit.user.id %}" style="text-decoration: none; color: black">
+                                @{{ twit.user.username }}</a>
+                            </small>
+                        </div>
+                        <div class="col-10">
+                            <div class="twitbody">
+                            {{twit.body}}
+                            <br>
+                            <small class="text-muted">
+                                ({{ twit.created_at }})da chop etgan
+                                <br>
+                                {% if user in twit.likes.all %}
+                                    <a href="{% url 'twit_like' twit.id%}" style="text-decoration: none">
+                                        <i class="fa-solid fa-heart" style="color: darkblue;"></i>
+                                    </a> {{twit.number_of_likes}}
+                                    {% else %}
+                                    <a href="{% url 'twit_like' twit.id%}" style="text-decoration: none">
+                                        <i class="fa fa-heart-o" style="color: darkblue;"></i>
+                                    </a> {{twit.number_of_likes}}
+                                {% endif %}
+                                &nbsp; &nbsp;
+                                <a href={% url 'shu_twit' twit.id %}><i class="fa-solid fa-link" style="color: purple"></i></a>
+                                {% if request.user.username == profile.user.username%}
+                                &nbsp; &nbsp;
+                                <a href={% url 'edit_twit' twit.id %} style="color: green"><i class="fa-solid fa-pen-to-square"></i></a>
+                                &nbsp; &nbsp;
+                                <a href={% url 'delete_twit' twit.id %} style="text-decoration: none; color: #C70039"><i class="fa-solid fa-eraser"></i></a>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </div>
+
+        <div class="col-4">
+            {% if profile.profile_image %}
+            <img src={{ profile.profile_image.url }} class="rounded-circle" style="width:140px; height: 140px; border: dashed 3px gray" />
+            <hr>
+            {% endif %}
+            {% if profile.profile_bio %}
+            <i class="fa-solid fa-circle-info"></i> {{ profile.profile_bio }}
+            {% endif %}<br>
+            {% if profile.telegram_link %}
+            <a href=https://t.me/{{ profile.telegram_link }} target="_blank" style="color: black; font-size: 30px;"><i class="fa-brands fa-telegram"></i></a>            
+            {% endif %}
+            &nbsp; &nbsp;
+            {% if profile.x_link %}
+            <a href=https://x.com/{{ profile.x_link }} target="_blank" style="color: black; font-size: 30px;"> <i class="fa-brands fa-square-x-twitter"></i></a>
+            {% endif %}
+            &nbsp; &nbsp;
+            {% if profile.website_link %}
+            <a href=https://{{ profile.website_link }} target="_blank" style="color: black; font-size: 30px;"><i class="fa-solid fa-earth-asia"></i></a>            
+            {% endif %}
+            &nbsp; &nbsp;
+            {% if profile.github_link %}
+            <a href=https://github.com/{{ profile.github_link }} target="_blank" style="color: black; font-size: 30px;"><i class="fa-brands fa-github"></i></a>
+            {% endif %}
+            <hr>
+            <div class="card">   
+                <h5 class="card-header">Ergashganlari</h5>   <div class="card-body">    
+                <p class="card-text">
+                {% for following in profile.follows.all %}
+                <a href="{% url 'profile' following.user.id %}" style="text-decoration: none; color: purple">@{{ following }}</a> <a href={% url 'unfollow' following.user.id %} style="color: crimson"><i class="fa-solid fa-user-minus"></i></a><br>
+
+                {% endfor %}</p>
+            </div>
+            <div class="card-footer text-end">
+                <a href={% url 'follows' profile.user.id%} class="btn btn-sm btn-outline-secondary">Barchasini ko'rish</a>
+            </div>
+        </div>
+            <br>
+            <div class="card">
+                <h5 class="card-header">Unga ergashganlar</h5>
+                <div class="card-body">
+                <p class="card-text">{% for following in profile.followed_by.all|slice:3 %}
+                    <a href="{% url 'profile' following.user.id %}" style="text-decoration: none">@{{ following }}</a> &nbsp; &nbsp;
+                    {% if following in profile.follows.all %}
+                    <a href={% url 'unfollow' following.user.id %} style="color: orange; text-decoration: none; padding: 3px 1rem; margin: 2px; border: 1px solid green; border-radius: 3px;"><i class="fa-solid fa-user-minus"></i> TARK ETISH</a>
+                    {% else %}
+                    <a href={% url 'follow' following.user.id %} style="color: green; text-decoration: none; padding: 3px 1rem; margin: 2px; border: 1px solid green; border-radius: 3px;"><i class="fa-solid fa-user-plus"></i> DO'STLASHISH</a>
+                    {% endif %}
+                    <br>
+                    {% endfor %}</p>
+                    <br>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href={% url 'followers' profile.user.id%} class="btn btn-sm btn-outline-secondary">Ahli kuzatuvchilar</a>
+                    </div>
+            </div>
+            <br>
+            <form method=POST>
+                {% csrf_token %}
+                {% if profile in user.profile.follows.all %}
+                <button class="btn btn-outline-danger" name="follow" value="unfollow" type="submit"><i class="fa-solid fa-user-minus"></i> @{{ profile.user.username|lower}}dan yuz o'girish</button>
+
+                {% else %}
+                <button class="btn btn-outline-primary" name="follow" value="follow" type="submit"><i class="fa-solid fa-user-plus"></i> @{{ profile.user.username|lower }}ga ergashish</button>
+                {% endif %}
+                
+            </form>
+            <br>
+            {% if request.user.id == profile.user.id %}
+            <a href={% url 'update_user' %} class="btn btn-outline-secondary"><i class="fa-solid fa-user-pen"></i> Profilni tahrirlash</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

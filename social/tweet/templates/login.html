@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content%}
+
+{% if user.is_authenticated %}
+<h1>Siz allaqachon tizimga kirgansiz. Wow!</h1>
+{% else %}
+<div class="col-md-6 offset-md-3">
+<h1>Kirish</h1>
+<hr>
+<form method=POST action="{% url 'login' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <input type="text" class="form-control" placeholder="Taxallusingizni kiriting" name="username">
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="Sirli so'zni kiriting" name="password">
+    </div>
+    <button type="submit" class="btn btn-primary">Bosingiz!</button>
+  </form>
+
+</div>
+{% endif %}
+{% endblock %}

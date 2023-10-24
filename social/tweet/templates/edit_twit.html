@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content%}
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-8">
+                <h3>Aytgan gapidan qaytish && xatoni tuzatish boshqarmasi</h3>                
+                <div class="alert" role="alert">
+                    <div class="container">
+                        <div class="atwit">
+                            <div class="chapakay">
+                                {% if twit.user.profile.profile_image %}
+                                <img src={{twit.user.profile.profile_image.url}} alt={{profile.user.username}} width="50" height="50" class="rounded-circle" />
+                                {% else %}
+                                <img src={% static 'images/tweety.png'%} alt={{profile.user.username}} width=50 height=50 class="rounded-circle" />
+                                {% endif %}
+                            </div>
+                            <div class="twitbody">
+                                {{twit.body}}
+                                <br>
+                                <small class="text-muted">
+                                    @{{ twit.user.username }}
+                                    ({{ twit.created_at }})da chop etgan
+                                    <br>
+                                    {% if user in twit.likes.all %}
+                                    <a href="{% url 'twit_like' twit.id%}" style="text-decoration: none">
+                                        <i class="fa-solid fa-heart" style="color: darkblue;"></i>
+                                    </a> {{twit.number_of_likes}}
+                                    {% else %}
+                                    <a href="{% url 'twit_like' twit.id%}" style="text-decoration: none">
+                                        <i class="fa fa-heart-o" style="color: darkblue;"></i>
+                                    </a> {{twit.number_of_likes}}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            
+
+                <br><br>
+                {% if form %}
+                <form method=POST>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-secondary">O'zgartir</button>
+                </form>
+                {% endif %}
+        </div>
+    </div>
+</div>
+    {% endblock %}
