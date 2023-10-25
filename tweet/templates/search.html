@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content%}
+<h2>Tweet izlash</h2>
+<form method=POST>
+    {% csrf_token %}
+    <input type="input" class="form-control" placeholder="Izlagan imkon topar..." name="search">
+    <br>               
+<button type="submit" class="btn btn-secondary">Qidirish</button>
+</form>
+<br>
+<hr>
+{% if search %}
+<h3>Natijalar: {{search}}</h3><br/>
+{% for twit in searched %}
+<div class="alert" role="alert">
+    <div class="container">
+        <div class="atwit col-sm-12">
+            <div class="chapakay col-sm-1">
+                <div class="propho">
+                {% if twit.user.profile.profile_image %}
+                <img src={{twit.user.profile.profile_image.url}} alt={{profile.user.username}} width="50" height="50" class="rounded-circle" />
+                {% else %}
+                <img src={% static 'images/tweeter.png'%} alt={{profile.user.username}} width=50 height=50 class="image-fluid" />
+                {% endif %}
+                </div>
+                <small class="datum">
+                        <a href="{% url 'profile' twit.user.id %}" style="text-decoration: none; color: black">
+                        @{{ twit.user.username }}</a>
+                </small>
+            </div>
+            <div class="col-sm-11 right">
+                <div class="twitbody">
+                {{twit.body}}
+                <small class="text-muted" style="color: white">
+
+                    {% if user in twit.likes.all %}
+                    <a href="{% url 'twit_like' twit.id%}" style="text-decoration: none;">
+                        <i class="fa-solid fa-heart" style="color: purple"></i>
+                    </a>{{twit.number_of_likes}}
+                    {% else %}
+                    <a href="{% url 'twit_like' twit.id%}" style="text-decoration: none">
+                        <i class="fa fa-heart-o" style="color: purple"></i>
+                    </a> {{twit.number_of_likes}}
+                    {% endif %}
+                    <a href={% url 'shu_twit' twit.id %}><i class="fa-solid fa-link" style="color: purple"></i></a>
+                    ({{ twit.created_at }})
+                </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endfor%}
+
+{%else%}
+<h3>Yo'q narsani qidirib bo'lmas))</h3>
+{%endif%}
+{% endblock %}
