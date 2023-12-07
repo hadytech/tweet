@@ -12,9 +12,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-bb1egy+#5k!ydcy_&^aadu&-7b$$kdu6!@_aw6dv2+&hparxfd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['tweet.uz', 'sinov.tweet.uz', '167.172.145.168']
+ALLOWED_HOSTS = ['tweet.uz', '24.144.104.115']
 
 
 # Application definition
@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tweet',
+    'social',
+    'tweet.uz'.
 ]
 
 MIDDLEWARE = [
